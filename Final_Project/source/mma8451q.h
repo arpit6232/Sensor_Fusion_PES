@@ -42,6 +42,11 @@
 #define MMA8451Q_REG_CTRL_REG4			(0x2D)	/*< CTRL_REG2 System Control 4 Register */
 #define MMA8451Q_REG_CTRL_REG5			(0x2E)	/*< CTRL_REG2 System Control 5 Register */
 
+#define COUNTS_PER_G (4096.0)
+#define M_PI (3.14159265)
+
+#define REG_XHI 0x01
+extern uint32_t DATA_READY;
 /**
  * @brief Sensitivity configuration
  */
@@ -335,5 +340,10 @@ void MMA8451Q_SetOversampling(mma8451q_confreg_t *const configuration, mma8451q_
 void MMA8451Q_SetTransient();
 
 
+void convert_xyz_to_roll_pitch(mma8451q_acc_t *acc, float *roll, float *pitch);
+
+void read_full_xyz(mma8451q_acc_t *acc);
+
+int init_mma();
 
 #endif /* MMA8451Q_H_ */

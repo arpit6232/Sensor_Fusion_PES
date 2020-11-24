@@ -10,6 +10,7 @@
 #include "stdint.h"
 #include "assert.h"
 #include "MKL25Z4.h"
+#include "math.h"
 
 
 #define CTRL_REG1_ACTIVE_SHIFT 	(0x00U)
@@ -35,6 +36,18 @@
 #define XYZ_DATA_CFG_FS_MASK 	(0x03u)
 #define XYZ_DATA_CFG_HPF_OUT_SHIFT (0x04u)
 #define XYZ_DATA_CFG_HPF_OUT_MASK (0x10u)
+
+#define MMA_ADDR 0x3A
+#define MMA8451Q_INT_PORT	PORTA				/*! Port at which the MMA8451Q INT1 and INT2 pins are attached */
+#define MMA8451Q_INT_GPIO	GPIOA				/*! Port at which the MMA8451Q INT1 and INT2 pins are attached */
+#define MMA8451Q_INT1_PIN	14					/*! Pin at which the MMA8451Q INT1 is attached */
+#define MMA8451Q_INT2_PIN	15					/*! Pin at which the MMA8451Q INT2 is attached */
+
+
+#define MPU6050_INT_PORT	PORTA				/*! Port at which the MPU6050 INT pin is attached */
+#define MPU6050_INT_GPIO	GPIOA				/*! Port at which the MPU6050 INT pin is attached */
+#define MPU6050_INT_PIN		13					/*! Pin at which the MPU6050 INT is attached */
+
 
 /**
  * @brief Reads the accelerometer data in 14bit no-fifo mode
@@ -453,3 +466,69 @@ void MMA8451Q_StoreConfiguration(const mma8451q_confreg_t *const configuration)
 	I2C_SendStop();
 }
 
+
+void convert_xyz_to_roll_pitch(mma8451q_acc_t *acc, float *roll, float *pitch) {
+	float ax = acc->xyz[0]/COUNTS_PER_G,
+				ay = acc->xyz[1]/COUNTS_PER_G,
+				az = acc->xyz[2]/COUNTS_PER_G;
+
+	*roll = atan2(ay, az)*180/M_PI;
+	*pitch = atan2(ax, sqrt(ay*ay + az*az))*180/M_PI;
+
+}
+
+void read_full_xyz(mma8451q_acc_t *acc)
+{
+	int i;
+	uint8_t data[6];
+	int16_t temp[3];
+
+	i2c_start();
+	i2c_read_setup(MMA_ADDR , REG_XHI);
+
+	// Read five bytes in repeated mode
+	for( i=0; i<5; i++)	{
+		data[i] = i2c_repeated_read(0);
+	}
+	// Read last byte ending repeated mode
+	data[i] = i2c_repeated_read(1);
+
+//	i2c_read_bytes(MMA_ADDR , REG_XHI, data, 6);
+
+	for ( i=0; i<3; i++ ) {
+		temp[i] = (int16_t) ((data[2*i]<<8) | data[2*i+1]);
+	}
+
+	// Align for 14 bits
+	acc->xyz[0] = temp[0]/8;
+	acc->xyz[1] = temp[1]/4;
+	acc->xyz[2] = temp[2]/40;
+}
+
+
+int init_mma()
+{
+	//set active mode, 14 bit samples and 800 Hz ODR
+	i2c_write_byte(MMA_ADDR, MMA8451Q_REG_CTRL_REG1, 0x01);
+	MMA8451Q_INT_PORT->PCR[MMA8451Q_INT1_PIN] = PORT_PCR_MUX(0x1) | PORT_PCR_IRQC(0xA) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK; /* interrupt on falling edge, pull-up for open drain/active low line */
+//	MMA8451Q_INT_GPIO->PDDR &= ~(GPIO_PDDR_PDD(1 << MMA8451Q_INT1_PIN) | GPIO_PDDR_PDD(1 << MMA8451Q_INT2_PIN));
+	MMA8451Q_INT_GPIO->PDDR &= ~(GPIO_PDDR_PDD(1 << MMA8451Q_INT1_PIN));
+
+
+	//    MMA8451Q_REG_CTRL_REG5
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG1, 0x00);
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG3, 0x00);             // Push-pull, active low interrupt
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG4, 0x01);             // Enable DRDY interrupt
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG5, 0x01);             // DRDY interrupt routed to INT1 -
+
+//    MMA8451Q_StoreConfiguration(configuration);
+//    MMA8451Q_EnterActiveMode();
+
+
+
+	//    /* prepare interrupts for pin change / PORTA */
+	NVIC_SetPriority(PORTA_IRQn, 2); // 0, 1, 2, or 3
+	NVIC_ClearPendingIRQ(PORTA_IRQn);
+	NVIC_EnableIRQ(PORTA_IRQn);
+	return 1;
+}

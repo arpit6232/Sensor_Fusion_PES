@@ -1,4 +1,4 @@
-mma8451q.h:216:20:MMA8451Q_InitializeData	16	static
-Final_Project.c:74:6:PORTA_IRQHandler	24	static
-Final_Project.c:97:6:InitI2CArbiter	16	static
-Final_Project.c:114:5:main	24	static
+mma8451q.h:221:20:MMA8451Q_InitializeData	16	static
+Final_Project.c:76:6:PORTA_IRQHandler	24	static
+Final_Project.c:101:6:InitI2CArbiter	16	static
+Final_Project.c:118:5:main	40	static
