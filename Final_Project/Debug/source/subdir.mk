@@ -7,6 +7,7 @@ C_SRCS += \
 ../source/Final_Project.c \
 ../source/buffer.c \
 ../source/clock.c \
+../source/hmc5883l.c \
 ../source/i2c.c \
 ../source/i2carbiter.c \
 ../source/init_sensors.c \
@@ -21,6 +22,7 @@ OBJS += \
 ./source/Final_Project.o \
 ./source/buffer.o \
 ./source/clock.o \
+./source/hmc5883l.o \
 ./source/i2c.o \
 ./source/i2carbiter.o \
 ./source/init_sensors.o \
@@ -35,6 +37,7 @@ C_DEPS += \
 ./source/Final_Project.d \
 ./source/buffer.d \
 ./source/clock.d \
+./source/hmc5883l.d \
 ./source/i2c.d \
 ./source/i2carbiter.d \
 ./source/init_sensors.d \

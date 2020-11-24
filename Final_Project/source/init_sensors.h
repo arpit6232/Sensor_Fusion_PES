@@ -34,10 +34,10 @@ void InitMMA8451Q();
 //*/
 //void InitMPU6050();
 //
-///**
-//* @brief Sets up the HMC5883L communication
-//*/
-//void InitHMC5883L();
+/**
+* @brief Sets up the HMC5883L communication
+*/
+void InitHMC5883L();
 //
 ///**
 //* @brief Gets the scaling value for the MPU6050 accelerometer

@@ -328,6 +328,12 @@ void MMA8451Q_ClearInterruptConfiguration(mma8451q_confreg_t *const configuratio
 void MMA8451Q_SetOversampling(mma8451q_confreg_t *const configuration, mma8451q_oversampling_t oversampling);
 
 
+/**
+ * @brief Configures the transient mode
+ * @param[in] oversampling The oversampling mode
+ */
+void MMA8451Q_SetTransient();
+
 
 
 #endif /* MMA8451Q_H_ */

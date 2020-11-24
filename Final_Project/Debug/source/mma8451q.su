@@ -19,9 +19,10 @@ mma8451q.c:90:9:MMA8451Q_SystemMode	8	static
 mma8451q.c:99:9:MMA8451Q_LandscapePortraitConfig	8	static
 mma8451q.c:108:6:MMA8451Q_SetOversampling	24	static
 mma8451q.c:127:6:MMA8451Q_SetSleepOversampling	24	static
-mma8451q.c:147:6:MMA8451Q_SetSensitivity	16	static
-mma8451q.c:165:6:MMA8451Q_SetInterruptMode	32	static
-mma8451q.c:187:6:MMA8451Q_ConfigureInterrupt	24	static
-mma8451q.c:218:6:MMA8451Q_ClearInterruptConfiguration	16	static
-mma8451q.c:236:6:MMA8451Q_FetchConfiguration	24	static
-mma8451q.c:332:6:MMA8451Q_StoreConfiguration	16	static
+mma8451q.c:151:6:MMA8451Q_SetTransient	8	static
+mma8451q.c:184:6:MMA8451Q_SetSensitivity	16	static
+mma8451q.c:202:6:MMA8451Q_SetInterruptMode	32	static
+mma8451q.c:224:6:MMA8451Q_ConfigureInterrupt	24	static
+mma8451q.c:255:6:MMA8451Q_ClearInterruptConfiguration	16	static
+mma8451q.c:273:6:MMA8451Q_FetchConfiguration	24	static
+mma8451q.c:369:6:MMA8451Q_StoreConfiguration	16	static

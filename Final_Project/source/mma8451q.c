@@ -139,6 +139,43 @@ void MMA8451Q_SetSleepOversampling(mma8451q_confreg_t *const configuration, mma8
 	}
 }
 
+
+
+
+
+
+/**
+ * @brief Configures the transient mode
+ * @param[in] oversampling The oversampling mode
+ */
+void MMA8451Q_SetTransient()
+{
+//	I2C_WriteRegister(register uint8_t slaveId, register uint8_t registerAddress, register uint8_t value);
+
+	// Enable X and Y Axes and enable the latch: Register 0x1D Configuration Register
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_TRANSIENT_CFG, 0x16);
+
+	// Set the Threshold: Register 0x1F
+	/*
+	 * Note: Step count is 0.063g per count
+	 * 0.5g / 0.063g = 7.93. Therefore set the threshold to 8 counts
+	 */
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_TRANSIENT_THS, 0x08);
+
+	// Set the Debounce Counter for 50 ms: Register 0x20
+	I2C_WriteRegister(MMA8451Q_I2CADDR, 0x20, 0x05);
+
+	//
+
+}
+
+
+
+
+
+
+
+
 /**
  * @brief Configures the sensitivity and the high pass filter
  * @param[in] sensitivity The sensitivity
