@@ -16,6 +16,12 @@
 
 #define CORE_CLOCK			(XTAL_FREQ/XTAL_PEE_DIVIDE*XTAL_PEE_UPSCALE) /* Hz */
 
+#define PWM_PERIOD (48000)	/* PWM Brighness Period */
+#define FULL_ON (PWM_PERIOD-1)
+#define FULL_OFF (0)
+
 void InitClock();
+
+void InitTPM();
 
 #endif /* CLOCK_H_ */

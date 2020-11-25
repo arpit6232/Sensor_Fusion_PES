@@ -18,9 +18,9 @@ i2c.c:246:9:I2C_ModifyRegister	32	static
 i2c.c:291:6:I2C_ResetBus	24	static
 i2c.c:302:6:I2C_InitiateRegisterReadAt	16	static
 i2c.c:316:6:i2c_busy	8	static
-i2c.c:361:6:i2c_wait	16	static
-i2c.c:372:6:i2c_start	8	static
-i2c.c:380:6:i2c_read_setup	16	static
-i2c.c:398:9:i2c_repeated_read	24	static
-i2c.c:426:9:i2c_read_byte	32	static
-i2c.c:458:6:i2c_write_byte	24	static
+i2c.c:360:6:i2c_wait	16	static
+i2c.c:371:6:i2c_start	8	static
+i2c.c:378:6:i2c_read_setup	16	static
+i2c.c:395:9:i2c_repeated_read	24	static
+i2c.c:423:9:i2c_read_byte	32	static
+i2c.c:454:6:i2c_write_byte	24	static

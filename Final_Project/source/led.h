@@ -9,12 +9,17 @@
 #define LED_H_
 
 #include "MKL25Z4.h"
+#include "clock.h"
 
 
 // basic light switch
 #define LED1_POS (1)	// on port A
 #define LED2_POS (2)	// on port A
 #define SW1_POS (5)		// on port A
+#define FULL_BRIGHTNESS 48000
+#define RED_PWM 	TPM2->CONTROLS[0].CnV
+#define GREEN_PWM 	TPM2->CONTROLS[1].CnV
+#define BLUE_PWM 	TPM0->CONTROLS[1].CnV
 
 #define MASK(x) (1UL << (x))
 
@@ -23,12 +28,12 @@
 #define GREEN_LED_POS (19)	// on port B
 #define BLUE_LED_POS (1)		// on port D
 
-#define LED_RedOn()		PTB->PCOR = MASK(RED_LED_POS);
-#define LED_RedOff()	PTB->PSOR = MASK(RED_LED_POS);
-#define LED_GreenOn()	PTB->PCOR = MASK(GREEN_LED_POS);
-#define LED_GreenOff()	PTB->PSOR = MASK(GREEN_LED_POS);
-#define LED_BlueOn()	PTD->PCOR = MASK(BLUE_LED_POS);
-#define LED_BlueOff()	PTD->PSOR = MASK(BLUE_LED_POS);
+#define LED_RedOff()	TPM2->CONTROLS[0].CnV = 0;
+#define LED_RedOn()		TPM2->CONTROLS[0].CnV = FULL_BRIGHTNESS;
+#define LED_GreenOn()	TPM0->CONTROLS[1].CnV = 0;
+#define LED_GreenOff()	TPM0->CONTROLS[1].CnV = FULL_BRIGHTNESS;
+#define LED_BlueOn()	TPM2->CONTROLS[1].CnV = 0;
+#define LED_BlueOff()	TPM2->CONTROLS[1].CnV = FULL_BRIGHTNESS;
 
 //// function prototypes
 void Init_RGB_LEDs(void);

@@ -500,9 +500,9 @@ void read_full_xyz(mma8451q_acc_t *acc)
 	}
 
 	// Align for 14 bits
-	acc->xyz[0] = temp[0]/8;
+	acc->xyz[0] = temp[0]/4;
 	acc->xyz[1] = temp[1]/4;
-	acc->xyz[2] = temp[2]/40;
+	acc->xyz[2] = temp[2]/4;
 }
 
 

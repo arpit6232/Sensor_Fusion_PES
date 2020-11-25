@@ -5,7 +5,7 @@ source/led.o source/led.d: ../source/led.c ../source/led.h \
  /home/arpit/studies/pes/Final_Project/CMSIS/cmsis_gcc.h \
  /home/arpit/studies/pes/Final_Project/CMSIS/core_cmFunc.h \
  /home/arpit/studies/pes/Final_Project/CMSIS/system_MKL25Z4.h \
- ../source/delay.h
+ ../source/clock.h ../source/delay.h
 
 ../source/led.h:
 
@@ -20,5 +20,7 @@ source/led.o source/led.d: ../source/led.c ../source/led.h \
 /home/arpit/studies/pes/Final_Project/CMSIS/core_cmFunc.h:
 
 /home/arpit/studies/pes/Final_Project/CMSIS/system_MKL25Z4.h:
+
+../source/clock.h:
 
 ../source/delay.h:

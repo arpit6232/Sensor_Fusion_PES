@@ -44,6 +44,7 @@
 #include "assert.h"
 #include "clock.h"
 #include "systick.h"
+#include "systick.h"
 #include "delay.h"
 #include "buffer.h"
 #include "math.h"
@@ -54,7 +55,6 @@
 
 #include "init_sensors.h"
 #include "mma8451q.h"
-#include "hmc5883l.h"
 
 /*!
 * \def DATA_FUSE_MODE Set to the <code>1</code> to enable raw sensor data transmission or disable with <code>0</code> to enable data fusion
@@ -82,7 +82,7 @@ void PORTA_IRQHandler()
 	/* check MMA8451Q */
     register uint32_t fromMMA8451Q 	= (isfr_mma & ((1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN)));
 		if (fromMMA8451Q) {
-		LED_Red();
+		LED_RedOn();
 		PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
 		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x1E);
 		/* clear interrupts using BME decorated logical OR store */
@@ -128,10 +128,13 @@ int main(void) {
 
     PRINTF("Hello World\r\n");
     float roll = 0.0,  pitch = 0.0;
+    int PWM_Green=0, PWM_Blue = 0;
+    int OldRange = 180, NewRange = 48000;
 
     /* initialize the core clock and the systick timer */
-	InitClock();
+//	InitClock();
 	InitSysTick();
+	InitTPM();
 
 	/* initialize the RGB led */
 	LED_Init();
@@ -150,24 +153,32 @@ int main(void) {
 	InitMMA8451Q();
 //	assert(init_mma());
 
+	/* Began the Code */
+	TrafficLight();
+
 	mma8451q_acc_t acc;
 	MMA8451Q_InitializeData(&acc);
 	int readMMA;
 	while(1) {
-
-//		__disable_irq();
+		LED_RedOff();
 		readMMA = 1;
-//		__enable_irq();
 
 		if (readMMA)
 		{
-			LED_RedOff();
-
-//			MMA8451Q_ReadAcceleration14bitNoFifo(&acc);
 			read_full_xyz(&acc);
 			convert_xyz_to_roll_pitch(&acc, &roll, &pitch);
-			Control_RGB_LEDs(0, (fabs(roll) > 10)? 1:0, (fabs(pitch) > 10)? 1:0);
-			PRINTF("\r\n X: %d, Y: %d, Z: %d", acc.xyz[0], acc.xyz[1], acc.xyz[2]);
+			PWM_Green = (((int)roll * NewRange ) / OldRange );
+			PWM_Blue = (((int)pitch * NewRange ) / OldRange );
+			if(PWM_Blue < 533) {
+				PWM_Blue = PWM_Blue *-1;
+			}
+			if((int) pitch > 80) {
+				GREEN_PWM = 0;
+			}
+			GREEN_PWM = PWM_Green;
+			BLUE_PWM = PWM_Blue;
+
+			PRINTF("\r\n roll: %d, pitch: %d", (int)roll, (int)pitch);
 		}
 	}
 

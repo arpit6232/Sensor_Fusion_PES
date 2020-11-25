@@ -357,7 +357,6 @@ void i2c_busy(void){
 	i2c_lock=1;
 }
 
-#pragma no_inline
 void i2c_wait(void) {
 	lock_detect = 0;
 	while(((I2C0->S & I2C_S_IICIF_MASK)==0) & (lock_detect < 200)) {
@@ -376,7 +375,6 @@ void i2c_start()
 }
 
 //send device and register addresses
-#pragma no_inline
 void i2c_read_setup(uint8_t dev, uint8_t address)
 {
 	I2C0->D = dev;			  /*send dev address	*/
@@ -394,7 +392,6 @@ void i2c_read_setup(uint8_t dev, uint8_t address)
 }
 
 //read a byte and ack/nack as appropriate
-// #pragma no_inline
 uint8_t i2c_repeated_read(uint8_t isLastRead)
 {
 	uint8_t data;
@@ -454,7 +451,6 @@ uint8_t i2c_read_byte(uint8_t dev, uint8_t address)
 
 
 //using 7bit addressing writes a byte data to dev:address
-#pragma no_inline
 void i2c_write_byte(uint8_t dev, uint8_t address, uint8_t data)
 {
 

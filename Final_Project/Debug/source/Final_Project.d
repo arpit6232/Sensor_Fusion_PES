@@ -19,9 +19,8 @@ source/Final_Project.o source/Final_Project.d: ../source/Final_Project.c \
  /home/arpit/studies/pes/Final_Project/CMSIS/MKL25Z4.h \
  /home/arpit/studies/pes/Final_Project/utilities/fsl_debug_console.h \
  ../source/bme.h ../source/clock.h ../source/systick.h ../source/delay.h \
- ../source/buffer.h ../source/led.h ../source/i2c.h \
- ../source/i2carbiter.h ../source/init_sensors.h ../source/mma8451q.h \
- ../source/hmc5883l.h
+ ../source/buffer.h ../source/i2c.h ../source/i2carbiter.h \
+ ../source/led.h ../source/init_sensors.h ../source/mma8451q.h
 
 /home/arpit/studies/pes/Final_Project/board/board.h:
 
@@ -71,14 +70,12 @@ source/Final_Project.o source/Final_Project.d: ../source/Final_Project.c \
 
 ../source/buffer.h:
 
-../source/led.h:
-
 ../source/i2c.h:
 
 ../source/i2carbiter.h:
 
+../source/led.h:
+
 ../source/init_sensors.h:
 
 ../source/mma8451q.h:
-
-../source/hmc5883l.h:
