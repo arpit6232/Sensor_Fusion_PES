@@ -55,44 +55,35 @@
 
 #include "init_sensors.h"
 #include "mma8451q.h"
+#include "statemachine.h"
 
-/*!
-* \def DATA_FUSE_MODE Set to the <code>1</code> to enable raw sensor data transmission or disable with <code>0</code> to enable data fusion
-*/
-#define DATA_FETCH_MODE 0
 
-/*!
-* \def DATA_FUSE_MODE Set to the opposite of {\ref DATA_FETCH_MODE} and enables sensor fusion
-*/
-#define DATA_FUSE_MODE (!DATA_FETCH_MODE)
-static volatile uint8_t poll_mma8451q = 1;
 #define I2CARBITER_COUNT 	(1)					/*< Number of I2C devices we're talking to */
 i2carbiter_entry_t i2carbiter_entries[I2CARBITER_COUNT]; /*< Structure for the pin enabling/disabling manager */
 
+//
+///**
+// * @brief Handler for interrupts on port A
+// */
+//void PORTA_IRQHandler()
+//{
+//
+////	PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
+//    register uint32_t isfr_mma = MMA8451Q_INT_PORT->ISFR;
+//
+//	/* check MMA8451Q */
+//    register uint32_t fromMMA8451Q 	= (isfr_mma & ((1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN)));
+//		if (fromMMA8451Q) {
+//		LED_RedOn();
+//		PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
+//		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x1E);
+//		/* clear interrupts using BME decorated logical OR store */
+//		PORTA->ISFR |= (1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN);
+//		//		BME_OR_W(&MMA8451Q_INT_PORT->ISFR, (1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN));
+//    }
+//}
+//
 
-/**
- * @brief Handler for interrupts on port A
- */
-void PORTA_IRQHandler()
-{
-
-//	PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
-    register uint32_t isfr_mma = MMA8451Q_INT_PORT->ISFR;
-
-	/* check MMA8451Q */
-    register uint32_t fromMMA8451Q 	= (isfr_mma & ((1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN)));
-		if (fromMMA8451Q) {
-		LED_RedOn();
-		PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
-		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x1E);
-		/* clear interrupts using BME decorated logical OR store */
-		PORTA->ISFR |= (1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN);
-		//		BME_OR_W(&MMA8451Q_INT_PORT->ISFR, (1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN));
-    }
-
-
-
-}
 
 /************************************************************************/
 /* I2C arbiter configuration                                            */
@@ -127,9 +118,9 @@ int main(void) {
 #endif
 
     PRINTF("Hello World\r\n");
-    float roll = 0.0,  pitch = 0.0;
-    int PWM_Green=0, PWM_Blue = 0;
-    int OldRange = 180, NewRange = 48000;
+//    float roll = 0.0,  pitch = 0.0;
+//    int PWM_Green=0, PWM_Blue = 0;
+//    int OldRange = 180, NewRange = 48000;
 
     /* initialize the core clock and the systick timer */
 //	InitClock();
@@ -156,31 +147,33 @@ int main(void) {
 	/* Began the Code */
 	TrafficLight();
 
-	mma8451q_acc_t acc;
-	MMA8451Q_InitializeData(&acc);
-	int readMMA;
-	while(1) {
-		LED_RedOff();
-		readMMA = 1;
+//	mma8451q_acc_t acc;
+//	MMA8451Q_InitializeData(&acc);
+//	int readMMA;
+//	while(1) {
+//		LED_RedOff();
+//		readMMA = 1;
+//
+//		if (readMMA)
+//		{
+//			read_full_xyz(&acc);
+//			convert_xyz_to_roll_pitch(&acc, &roll, &pitch);
+//			PWM_Green = (((int)roll * NewRange ) / OldRange );
+//			PWM_Blue = (((int)pitch * NewRange ) / OldRange );
+//			if(PWM_Blue < 533) {
+//				PWM_Blue = PWM_Blue *-1;
+//			}
+//			if((int) pitch > 80) {
+//				GREEN_PWM = 0;
+//			}
+//			GREEN_PWM = PWM_Green;
+//			BLUE_PWM = PWM_Blue;
+//
+//			PRINTF("\r\n roll: %d, pitch: %d", (int)roll, (int)pitch);
+//		}
+//	}
 
-		if (readMMA)
-		{
-			read_full_xyz(&acc);
-			convert_xyz_to_roll_pitch(&acc, &roll, &pitch);
-			PWM_Green = (((int)roll * NewRange ) / OldRange );
-			PWM_Blue = (((int)pitch * NewRange ) / OldRange );
-			if(PWM_Blue < 533) {
-				PWM_Blue = PWM_Blue *-1;
-			}
-			if((int) pitch > 80) {
-				GREEN_PWM = 0;
-			}
-			GREEN_PWM = PWM_Green;
-			BLUE_PWM = PWM_Blue;
-
-			PRINTF("\r\n roll: %d, pitch: %d", (int)roll, (int)pitch);
-		}
-	}
+	state_machine();
 
     return 0 ;
 }

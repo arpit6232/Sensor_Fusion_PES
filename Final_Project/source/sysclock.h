@@ -10,7 +10,6 @@
 
 
 #define SYSCLOCK_FREQUENCY (48000000U)
-
 /*
  * Initializes the system clock. You should call this first in your
  * program.

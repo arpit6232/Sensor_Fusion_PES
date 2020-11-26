@@ -14,6 +14,7 @@ C_SRCS += \
 ../source/mma8451q.c \
 ../source/mtb.c \
 ../source/semihost_hardfault.c \
+../source/statemachine.c \
 ../source/sysclock.c \
 ../source/systick.c 
 
@@ -28,6 +29,7 @@ OBJS += \
 ./source/mma8451q.o \
 ./source/mtb.o \
 ./source/semihost_hardfault.o \
+./source/statemachine.o \
 ./source/sysclock.o \
 ./source/systick.o 
 
@@ -42,6 +44,7 @@ C_DEPS += \
 ./source/mma8451q.d \
 ./source/mtb.d \
 ./source/semihost_hardfault.d \
+./source/statemachine.d \
 ./source/sysclock.d \
 ./source/systick.d 
 
