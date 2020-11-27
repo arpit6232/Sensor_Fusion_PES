@@ -45,6 +45,8 @@ Source Code for this assignment can be found under source /
 
 - ![State Machine](Images/MMA8451Q_func.png) </b>
 
+- The State Machine has only 2 states, "Routine" which updates the LED's in accordance to the Tilt Angles and "Accel" which Flashes LED's according to current Angle, to indicate a Sudden Jerk is detected. The flags linked to these are updated in the IRQ Handlers.
+
 - Motion Detection (Jerk/Jolt) is used to simply alert the main processor that the device is currently in use has caused a sudden acceleration. When the acceleration exceeds a set threshold the motion interrupt is asserted (In this repository it is 4g). A motion can be a fast moving shake or a slow moving tilt. This will depend on the threshold (4g) and timing values configured for the event. The motion detection function is used in this project to analyze static acceleration changes or faster jolts.
 
 - RGB LED's on the processor react to the Acceleration values calculating Roll and Pitch with the processor is currently at by changing the Brightness of the Green LED (Roll) and Blue LED (Pitch) relating to higher brightness meaning for higher Angle. 
