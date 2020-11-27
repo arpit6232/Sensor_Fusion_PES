@@ -61,16 +61,16 @@ Source Code for this assignment can be found under source /
 
 - ![Pitch](Images/Pitch.png) </b>
 
-- [![Pitch](https://www.youtube.com/watch?v=Aki_wWMmv28)](https://www.youtube.com/watch?v=Aki_wWMmv28)
+- [![Video Link for Pitch Action](https://www.youtube.com/watch?v=Aki_wWMmv28)](https://www.youtube.com/watch?v=Aki_wWMmv28)
 
 ## Roll 
 
 - ![Roll](Images/Roll.png) </b>
 
-- [![Roll](https://www.youtube.com/watch?v=g3Y2SueXwnY&feature=youtu.be)](https://www.youtube.com/watch?v=g3Y2SueXwnY&feature=youtu.be)
+- [![Video Link for Roll Action](https://www.youtube.com/watch?v=g3Y2SueXwnY&feature=youtu.be)](https://www.youtube.com/watch?v=g3Y2SueXwnY&feature=youtu.be)
 
 ## Sudden Jerk/Acceleration
 
-- [![Jerk/Jolt](https://www.youtube.com/watch?v=ZswreGJfLNE&feature=youtu.be)](https://www.youtube.com/watch?v=ZswreGJfLNE&feature=youtu.be)
+- [![Video Link for Jerk/Jolt Action](https://www.youtube.com/watch?v=ZswreGJfLNE&feature=youtu.be)](https://www.youtube.com/watch?v=ZswreGJfLNE&feature=youtu.be)
 
 
