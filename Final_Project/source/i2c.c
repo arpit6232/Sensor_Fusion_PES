@@ -2,7 +2,15 @@
  * i2c.c
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Instantiation and functionalities for communication over I2C
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
+ * 		Links: Inspired from
+ * 				1) https://github.com/sunsided/frdm-kl25z-marg-fusion/blob/master/frdm-kl25z-acc-uart/Sources/i2c/i2c.c
+ *				2) https://github.com/alexander-g-dean/ESF/tree/master/NXP/Code/Chapter_8/I2C-Demo
  */
 
 #include "i2c.h"
@@ -312,7 +320,12 @@ void I2C_InitiateRegisterReadAt(const register uint8_t slaveId, const register u
 	I2C_ReceiverModeDriveClock();
 }
 
-
+/**
+ * @brief Processing the I2C bus operation to complete
+ *
+ * @param: None
+ * @param: None
+ */
 void i2c_busy(void){
 	// Start Signal
 	lock_detect=0;
@@ -357,6 +370,12 @@ void i2c_busy(void){
 	i2c_lock=1;
 }
 
+/**
+ * @brief Waits for an I2C bus operation to complete
+ *
+ * @param: None
+ * @param: None
+ */
 void i2c_wait(void) {
 	lock_detect = 0;
 	while(((I2C0->S & I2C_S_IICIF_MASK)==0) & (lock_detect < 200)) {
@@ -367,14 +386,14 @@ void i2c_wait(void) {
 	I2C0->S |= I2C_S_IICIF_MASK;
 }
 
-//send start sequence
+
 void i2c_start()
 {
 	I2C_TRAN;							/*set to transmit mode */
 	I2C_M_START;					/*send start	*/
 }
 
-//send device and register addresses
+
 void i2c_read_setup(uint8_t dev, uint8_t address)
 {
 	I2C0->D = dev;			  /*send dev address	*/
@@ -391,7 +410,7 @@ void i2c_read_setup(uint8_t dev, uint8_t address)
 
 }
 
-//read a byte and ack/nack as appropriate
+
 uint8_t i2c_repeated_read(uint8_t isLastRead)
 {
 	uint8_t data;
@@ -417,9 +436,6 @@ uint8_t i2c_repeated_read(uint8_t isLastRead)
 
 
 
-//////////funcs for reading and writing a single byte
-//using 7bit addressing reads a byte from dev:address
-// #pragma no_inline
 uint8_t i2c_read_byte(uint8_t dev, uint8_t address)
 {
 	uint8_t data;
@@ -450,7 +466,6 @@ uint8_t i2c_read_byte(uint8_t dev, uint8_t address)
 
 
 
-//using 7bit addressing writes a byte data to dev:address
 void i2c_write_byte(uint8_t dev, uint8_t address, uint8_t data)
 {
 

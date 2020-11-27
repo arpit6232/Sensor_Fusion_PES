@@ -2,9 +2,16 @@
  * i2c.h
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Header file for Instantiation and functionalities for communication over I2C
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
+ * 		Links: Inspired from
+ * 				1) https://github.com/sunsided/frdm-kl25z-marg-fusion/blob/master/frdm-kl25z-acc-uart/Project_Headers/i2c/i2c.h
+ *				2) https://github.com/alexander-g-dean/ESF/tree/master/NXP/Code/Chapter_8/I2C-Demo
  */
-
 #ifndef I2C_H_
 #define I2C_H_
 
@@ -24,8 +31,19 @@
  *  Setting this define to a nonzero value activates the proposed workaround (temporarily disabling the multiplier).
  */
 #define I2C_ENABLE_E6070_SPEEDHACK 	(1)
+#define I2C_M_START 	I2C0->C1 |= I2C_C1_MST_MASK
+#define I2C_M_STOP  	I2C0->C1 &= ~I2C_C1_MST_MASK
+#define I2C_M_RSTART 	I2C0->C1 |= I2C_C1_RSTA_MASK
 
+#define I2C_TRAN			I2C0->C1 |= I2C_C1_TX_MASK
+#define I2C_REC				I2C0->C1 &= ~I2C_C1_TX_MASK
 
+#define BUSY_ACK 	    while(I2C0->S & 0x01)
+#define TRANS_COMP		while(!(I2C0->S & 0x80))
+#define I2C_WAIT 			i2c_wait();
+
+#define NACK 	        I2C0->C1 |= I2C_C1_TXAK_MASK
+#define ACK           I2C0->C1 &= ~I2C_C1_TXAK_MASK
 
 /**
  * @brief Encodes the read address from the 7-bit slave address
@@ -49,10 +67,16 @@
 
 /**
  * @brief Initializes the I2C interface
+ *
+ * @param: None
+ * @return : None
  */
 void I2C_Init();
 /**
- * @brief Resets the bus by toggling master mode if the bus is busy. This will interrupt ongoing traffic, so use with caution.
+ * @brief Resets the bus by toggling master mode if the bus is busy. This will interrupt ongoing traffic.
+ *
+ * @param: None
+ * @return: None
  */
 void I2C_ResetBus();
 
@@ -60,6 +84,7 @@ void I2C_ResetBus();
  * @brief Reads an 8-bit register from an I2C slave
  * @param[in] slaveId The device's I2C slave id
  * @param[in] registerAddress Address of the device register to read
+ *
  * @return The value at the register
  */
 uint8_t I2C_ReadRegister(register uint8_t slaveId, register uint8_t registerAddress);
@@ -71,6 +96,8 @@ uint8_t I2C_ReadRegister(register uint8_t slaveId, register uint8_t registerAddr
  * @param[in] startRegisterAddress The first register address
  * @param[in] registerCount The number of registers to read; Must be larger than zero.
  * @param[out] buffere The buffer to write into
+ *
+ * @return: None
  */
 void I2C_ReadRegisters(register uint8_t slaveId, register uint8_t startRegisterAddress, register uint8_t registerCount, uint8_t *buffer);
 
@@ -79,6 +106,8 @@ void I2C_ReadRegisters(register uint8_t slaveId, register uint8_t startRegisterA
  * @param[in] slaveId The device's I2C slave id
  * @param[in] registerAddress Address of the device register to read
  * @param[in] value The value to write
+ *
+ * @return: None
  */
 void I2C_WriteRegister(register uint8_t slaveId, register uint8_t registerAddress, register uint8_t value);
 
@@ -88,6 +117,7 @@ void I2C_WriteRegister(register uint8_t slaveId, register uint8_t registerAddres
  * @param[in] registerAddress The register to modify
  * @param[in] orMask The mask to OR the register with
  * @param[in] andMask The mask to AND the register with
+ *
  * @return The register after modification
  */
 uint8_t I2C_ModifyRegister(register uint8_t slaveId, uint8_t register registerAddress, register uint8_t andMask, register uint8_t orMask);
@@ -95,6 +125,9 @@ uint8_t I2C_ModifyRegister(register uint8_t slaveId, uint8_t register registerAd
 
 /**
  * @brief Waits for an I2C bus operation to complete
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_Wait()
 {
@@ -109,6 +142,9 @@ __STATIC_INLINE void I2C_Wait()
 
 /**
  * @brief Waits for an I2C bus operation to complete
+ *
+ * @param: None
+ * @param: None
  */
 __STATIC_INLINE void I2C_WaitWhileBusy()
 {
@@ -118,6 +154,9 @@ __STATIC_INLINE void I2C_WaitWhileBusy()
 
 /**
  * @brief Sends a start condition and enters TX mode.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_SendStart()
 {
@@ -134,6 +173,9 @@ __STATIC_INLINE void I2C_SendStart()
 
 /**
  * @brief Enters transmit mode.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_EnterTransmitMode()
 {
@@ -148,6 +190,9 @@ __STATIC_INLINE void I2C_EnterTransmitMode()
 
 /**
  * @brief Enters receive mode.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_EnterReceiveMode()
 {
@@ -165,6 +210,9 @@ __STATIC_INLINE void I2C_EnterReceiveMode()
  * @brief Enters receive mode and enables ACK.
  *
  * Enabling ACK may be required when more than one data byte will be read.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_EnterReceiveModeWithAck()
 {
@@ -185,6 +233,9 @@ __STATIC_INLINE void I2C_EnterReceiveModeWithAck()
  * @brief Enters receive mode and disables ACK.
  *
  * Disabling ACK may be required when only one data byte will be read.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_EnterReceiveModeWithoutAck()
 {
@@ -220,6 +271,9 @@ __STATIC_INLINE void I2C_EnterReceiveModeWithoutAck()
 
 /**
  * @brief Sends a repeated start condition and enters TX mode.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_SendRepeatedStart()
 {
@@ -245,6 +299,9 @@ __STATIC_INLINE void I2C_SendRepeatedStart()
 
 /**
  * @brief Sends a stop condition (also leaves TX mode)
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_SendStop()
 {
@@ -265,6 +322,9 @@ __STATIC_INLINE void I2C_SendStop()
  * @brief Enables sending of ACK
  *
  * Enabling ACK may be required when more than one data byte will be read.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_EnableAck()
 {
@@ -282,6 +342,9 @@ __STATIC_INLINE void I2C_EnableAck()
  * @brief Enables sending of NACK (disabling ACK)
  *
  * Enabling NACK may be required when no more data byte will be read.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_DisableAck()
 {
@@ -296,7 +359,10 @@ __STATIC_INLINE void I2C_DisableAck()
 
 /**
  * @brief Sends a byte over the I2C bus and waits for the operation to complete
+ *
  * @param[in] value The byte to send
+ *
+ * @return: None
  */
 __STATIC_INLINE void I2C_SendBlocking(const uint8_t value)
 {
@@ -306,7 +372,8 @@ __STATIC_INLINE void I2C_SendBlocking(const uint8_t value)
 
 /**
  * @brief Reads a byte over the I2C bus and drives the clock for another byte
- * @return There received byte
+ *
+ * @return vale: The received byte
  */
 __STATIC_INLINE uint8_t I2C_ReceiveDriving()
 {
@@ -317,7 +384,7 @@ __STATIC_INLINE uint8_t I2C_ReceiveDriving()
 
 /**
  * @brief Reads a byte over the I2C bus and drives the clock for another byte, while sending NACK
- * @return There received byte
+ * @return The received byte
  */
 __STATIC_INLINE uint8_t I2C_ReceiveDrivingWithNack()
 {
@@ -327,7 +394,7 @@ __STATIC_INLINE uint8_t I2C_ReceiveDrivingWithNack()
 
 /**
  * @brief Reads the last byte over the I2C bus and sends a stop condition
- * @return There received byte
+ * @return The received byte
  */
 __STATIC_INLINE uint8_t I2C_ReceiveAndStop()
 {
@@ -337,7 +404,7 @@ __STATIC_INLINE uint8_t I2C_ReceiveAndStop()
 
 /**
  * @brief Reads a byte over the I2C bus and sends a repeated start condition.
- * @return There received byte
+ * @return The received byte
  *
  * The I2C module is in transmit mode afterwards.
  */
@@ -349,6 +416,9 @@ __STATIC_INLINE uint8_t I2C_ReceiveAndRestart()
 
 /**
  * @brief Drives the clock in receiver mode in order to receive the first byte.
+ *
+ * @param: None
+ * @return: None
  */
 __STATIC_INLINE void I2C_ReceiverModeDriveClock()
 {
@@ -364,31 +434,55 @@ __STATIC_INLINE void I2C_ReceiverModeDriveClock()
  * @brief Initiates a register read after the module was brought into TX mode.
  * @param[in] slaveId The slave id
  * @param[in] registerAddress the register to read from
+ *
+ * @return: None
  */
 void I2C_InitiateRegisterReadAt(const register uint8_t slaveId, const register uint8_t registerAddress);
 
+//void i2c_init(void);
 
-#define I2C_M_START 	I2C0->C1 |= I2C_C1_MST_MASK
-#define I2C_M_STOP  	I2C0->C1 &= ~I2C_C1_MST_MASK
-#define I2C_M_RSTART 	I2C0->C1 |= I2C_C1_RSTA_MASK
-
-#define I2C_TRAN			I2C0->C1 |= I2C_C1_TX_MASK
-#define I2C_REC				I2C0->C1 &= ~I2C_C1_TX_MASK
-
-#define BUSY_ACK 	    while(I2C0->S & 0x01)
-#define TRANS_COMP		while(!(I2C0->S & 0x80))
-#define I2C_WAIT 			i2c_wait();
-
-#define NACK 	        I2C0->C1 |= I2C_C1_TXAK_MASK
-#define ACK           I2C0->C1 &= ~I2C_C1_TXAK_MASK
-
-void i2c_init(void);
-
+/**
+ * @brief send start sequence over the i2c
+ *
+ * @param: None
+ * @return: None
+ */
 void i2c_start(void);
+
+/**
+ * @brief Read the slave configuration
+ *
+ * @param: 1) dev: Slave Device Address
+ * 		   2) Address: Register Address to Read config from
+ * @return: None
+ */
 void i2c_read_setup(uint8_t dev, uint8_t address);
+
+/**
+ * @brief Read a byte and ack/nack as appropriate
+ *
+ * @param: uint8_t value: Read multiple Data Generated from register source
+ * @return: None
+ */
 uint8_t i2c_repeated_read(uint8_t);
 
+/**
+ * @brief For reading and writing a single byte
+		  using 7bit addressing reads a byte from dev:address
+ *
+ * @param: 1) dev: Slave Device Address
+ * 		   2) Address: Register Address to Read data from
+ * @return: None
+ */
 uint8_t i2c_read_byte(uint8_t dev, uint8_t address);
+
+/**
+ * @brief using 7bit addressing writes a byte data to dev:address
+ *
+ * @param: 1) dev: Slave Device Address
+ * 		   2) Address: Register Address to Read data from
+ * @return: None
+ */
 void i2c_write_byte(uint8_t dev, uint8_t address, uint8_t data);
 
 #endif /* I2C_H_ */

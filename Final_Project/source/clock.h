@@ -2,7 +2,13 @@
  * clock.h
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Header file for Instantiation and functionalities for clock and TPM
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
+ *		Links:  https://github.com/alexander-g-dean/ESF/tree/master/NXP/Code/Chapter_7/PWM_LED
  */
 
 #ifndef CLOCK_H_
@@ -20,8 +26,22 @@
 #define FULL_ON (PWM_PERIOD-1)
 #define FULL_OFF (0)
 
+/**
+ * @brief Enables the Main Proessor clock to 48Mhz
+ *
+ * ​ @param​ ​ none
+​ *
+​ * ​ ​@return​ ​ none
+ */
 void InitClock();
 
+/**
+ * @brief Instantiaes and Sets up TPM0 and TPM2
+ *
+ * ​ @param​ ​ none
+​ *
+​ * ​ ​@return​ ​ none
+ */
 void InitTPM();
 
 #endif /* CLOCK_H_ */

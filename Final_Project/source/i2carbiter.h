@@ -2,7 +2,13 @@
  * i2carbiter.h
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Header file for i2carbiter.h to settle a dispute or has ultimate
+ *      		authority in a matter in case multiple sensor update is required.
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
  */
 
 #ifndef I2CARBITER_H_

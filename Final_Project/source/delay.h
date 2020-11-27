@@ -2,7 +2,13 @@
  * delay.h
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Functionaliites for Busy Waiting Delay.
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
+ *
  */
 
 #ifndef DELAY_H_
@@ -27,7 +33,9 @@ static inline uint32_t systemTime()
 
 /**
  * @brief Delays using the system tick counter
+ *
  * @param[in] ms The delay time in milliseconds
+ *
  * @return none.
  */
 static inline void delay_ms(const uint16_t ms)

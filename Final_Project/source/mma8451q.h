@@ -1,8 +1,16 @@
 /*
- * mma8451q.h
+ * init_sensors.h
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: DataSheet and DataStructures to handle interaction with MMA8451Q sensor.
+ *
+ *    Sources of Reference :
+ * 		1) https://www.nxp.com/docs/en/data-sheet/MMA8451Q.pdf
+ * 		2) https://www.nxp.com/docs/en/application-note/AN4070.pdf
+ * 		3) https://www.nxp.com/docs/en/application-note/AN4071.pdf
+ * 		4) https://github.com/adafruit/Adafruit_MMA8451_Library
  */
 
 #ifndef MMA8451Q_H_
@@ -335,15 +343,30 @@ void MMA8451Q_SetOversampling(mma8451q_confreg_t *const configuration, mma8451q_
 
 /**
  * @brief Configures the transient mode
- * @param[in] oversampling The oversampling mode
  */
 void MMA8451Q_SetTransient();
 
+/**
+ * @brief Configures the motion mode
+ */
+void MMA8451Q_SetMotion();
 
+/**
+ * @brief Convert the acceleration data read to roll and pitch
+ *
+ * @param: 1) configuration: Inertial Sensor Configuration to read from
+ * 		   2) roll: float angle tilt calculated in degrees
+ * 		   3) pitch: float angle tilt calculated in degrees
+ */
 void convert_xyz_to_roll_pitch(mma8451q_acc_t *acc, float *roll, float *pitch);
 
+/**
+ * @brief Read acceleration data from inerital sensor and updat
+ *
+ * @param: configuration: Inertial Sensor Config storage for acceleration data.
+ */
 void read_full_xyz(mma8451q_acc_t *acc);
 
-int init_mma();
+//int init_mma();
 
 #endif /* MMA8451Q_H_ */

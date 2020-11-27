@@ -2,7 +2,13 @@
  * clock.c
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Instantiation and functionalities for Processor Clock and TPM
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
+ *		Links:  https://github.com/alexander-g-dean/ESF/tree/master/NXP/Code/Chapter_7/PWM_LED
  */
 
 #include "stdint.h"
@@ -15,15 +21,19 @@
 
 
 void InitClock() {
+
+	// Parameters to set
 	const int xtal = XTAL_FREQ;
 	const int8_t divider = XTAL_PEE_DIVIDE;
 	const int8_t multiplier = XTAL_PEE_UPSCALE;
 
+	// Instantiate Clock to 48 Mhz
 	sysclock_init(); // 48Mhz
 }
 
 void InitTPM() {
 
+	// CLock Gating TPM
 	SIM->SCGC6 |= SIM_SCGC6_TPM0_MASK | SIM_SCGC6_TPM2_MASK;
 
 	//set clock source for tpm: 48 MHz
@@ -37,16 +47,7 @@ void InitTPM() {
 	TPM0->SC |= (TPM_SC_CPWMS(0)| TPM_SC_CMOD(1));
 	TPM2->SC |= (TPM_SC_CPWMS(0)| TPM_SC_CMOD(1));
 
-//	// Contiunue Operation in Debug Mode
-//	TPM0->CONF |= TPM_CONF_DBGMODE(3);
-//	TPM2->CONF |= TPM_CONF_DBGMODE(3);
-
-//	// Set channel 1 to edge-aligned low-true PWM
-//	// Channel Based Setup to Edge-alligned active-low PWM
-//	TPM2->CONTROLS[0].CnSC |= (TPM_CnSC_ELSB(1) | TPM_CnSC_ELSA(0) | TPM_CnSC_MSB(1)  | TPM_CnSC_MSA(0));
-//	TPM2->CONTROLS[1].CnSC |= (TPM_CnSC_ELSB(1) | TPM_CnSC_ELSA(0) | TPM_CnSC_MSB(1)  | TPM_CnSC_MSA(0));
-//	TPM0->CONTROLS[1].CnSC |= (TPM_CnSC_ELSB(1) | TPM_CnSC_ELSA(0) | TPM_CnSC_MSB(1)  | TPM_CnSC_MSA(0));
-
+	// Set channel 1 to edge-aligned low-true PWM
 	TPM0->CONTROLS[1].CnSC = TPM_CnSC_MSB_MASK | TPM_CnSC_ELSA_MASK;
 	TPM2->CONTROLS[1].CnSC = TPM_CnSC_MSB_MASK | TPM_CnSC_ELSA_MASK;
 	TPM2->CONTROLS[0].CnSC = TPM_CnSC_MSB_MASK | TPM_CnSC_ELSA_MASK;
@@ -56,12 +57,6 @@ void InitTPM() {
 	TPM0->SC |= TPM_SC_PS(7);
 	TPM2->SC |= TPM_SC_PS(7);
 
-
-//	// Clock prescaler is 7 (PWM clock devided by 128)
-//	// This makes PWM clock as 48000000/128 = 375000 Hz (375Khz)
-//	TPM0->SC |= TPM_SC_PS(1);
-//	TPM2->SC |= TPM_SC_PS(1);
-
 	// Setting Initial Duty cycle to 0
 	TPM2->CONTROLS[0].CnV = 0;
 	TPM2->CONTROLS[1].CnV = 0;
@@ -69,10 +64,26 @@ void InitTPM() {
 
 }
 
+/**
+ * @brief Interrupt Handlers, for TPM0
+ * 			Defaulted to Clear Flags only
+ *
+ * ​ @param​ ​ none
+​ *
+​ * ​ ​@return​ ​ none
+ */
 void TPM0_IRQHandler() {
 	TPM0->SC |= TPM_SC_TOIE_MASK; // reset overflow flag
 }
 
+/**
+ * @brief Interrupt Handlers, for TPM2
+ * 			Defaulted to Clear Flags only
+ *
+ * ​ @param​ ​ none
+​ *
+​ * ​ ​@return​ ​ none
+ */
 void TPM2_IRQHandler() {
 	TPM2->SC |= TPM_SC_TOIE_MASK; // reset overflow flag
 }

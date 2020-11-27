@@ -4,13 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../source/Final_Project.c \
 ../source/buffer.c \
 ../source/clock.c \
 ../source/i2c.c \
 ../source/i2carbiter.c \
 ../source/init_sensors.c \
 ../source/led.c \
+../source/main.c \
 ../source/mma8451q.c \
 ../source/mtb.c \
 ../source/semihost_hardfault.c \
@@ -19,13 +19,13 @@ C_SRCS += \
 ../source/systick.c 
 
 OBJS += \
-./source/Final_Project.o \
 ./source/buffer.o \
 ./source/clock.o \
 ./source/i2c.o \
 ./source/i2carbiter.o \
 ./source/init_sensors.o \
 ./source/led.o \
+./source/main.o \
 ./source/mma8451q.o \
 ./source/mtb.o \
 ./source/semihost_hardfault.o \
@@ -34,13 +34,13 @@ OBJS += \
 ./source/systick.o 
 
 C_DEPS += \
-./source/Final_Project.d \
 ./source/buffer.d \
 ./source/clock.d \
 ./source/i2c.d \
 ./source/i2carbiter.d \
 ./source/init_sensors.d \
 ./source/led.d \
+./source/main.d \
 ./source/mma8451q.d \
 ./source/mtb.d \
 ./source/semihost_hardfault.d \

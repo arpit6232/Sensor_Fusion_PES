@@ -2,14 +2,22 @@
  * systick.c
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Mangement of Sytick Timer and Intrrupt
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
+ * 		Links: Inspired by https://learningmicro.wordpress.com/configuring-device-clock-and-using-systick-system-tick-timer-module-to-generate-software-timings/
  */
+
 
 
 #include "MKL25Z4.h"
 #include "sysclock.h"
 #include "systick.h"
 #include "fsl_debug_console.h"
+#include "global_defs.h"
 
 /**
  * @brief The system tick counter
@@ -26,20 +34,14 @@ volatile ticktime_t g_timer_start;
  */
 static uint32_t freeRunner = 0;
 
-#ifdef DEBUG
-	#define MSG_DEBUG PRINTF
-#else // non-debug mode - get rid of printing message
-	#define MSG_DEBUG(...)
-#endif
 
-
+/**
+​ * ​ ​ @brief​ ​  Instantiate a Systick Timer
+​ *
+​ * ​ ​ @param​ ​ none
+​ * ​ ​ @return​ ​ none
+​ */
 void InitSysTick() {
-//	SysTick->LOAD  = (uint32_t)(SYSTICK_TMR_RELOAD_VAL);              /* set reload register */
-//	  NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL); /* set Priority for Systick Interrupt */
-//	  SysTick->VAL   = 0UL;                                             /* Load the SysTick Counter Value */
-//	  SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |    /* use processor clock instead of external clock */
-//	                   SysTick_CTRL_TICKINT_Msk   |		/* enable interrupt if timer reaches zero */
-//	                   SysTick_CTRL_ENABLE_Msk;			/* enable the systick timer */
 
 	SysTick->LOAD = (SYSTICK_TMR_RELOAD_VAL);  // 1000 Hz
 	NVIC_SetPriority(SysTick_IRQn, 3); // NVIC Interrupt Priority // 3
@@ -76,7 +78,6 @@ void reset_timer() {
 }
 
 
-
 /**
 ​ * ​ ​ @brief​ ​ Returns the number of ticks from reset
 ​ *
@@ -89,7 +90,12 @@ ticktime_t get_timer() {
 }
 
 
-
+/**
+​ * ​ ​ @brief​ ​  TIRQ Handler to Update Time.
+​ *
+​ * ​ ​ @param​ ​ none
+​ * ​ ​ @return​ ​ none
+​ */
 void SysTick_Handler() {
 	SystemMilliseconds += ((++freeRunner) & 0b100) >> 2;
 	freeRunner &= 0b11;

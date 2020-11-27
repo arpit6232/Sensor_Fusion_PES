@@ -1,8 +1,16 @@
 /*
- * mma8451q.c
+ * init_sensors.h
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: DataSheet and DataStructures to handle interaction with MMA8451Q sensor.
+ *
+ *    Sources of Reference :
+ * 		1) https://www.nxp.com/docs/en/data-sheet/MMA8451Q.pdf
+ * 		2) https://www.nxp.com/docs/en/application-note/AN4070.pdf
+ * 		3) https://www.nxp.com/docs/en/application-note/AN4071.pdf
+ * 		4) https://github.com/adafruit/Adafruit_MMA8451_Library
  */
 
 #include "endian.h"
@@ -52,6 +60,7 @@
 /**
  * @brief Reads the accelerometer data in 14bit no-fifo mode
  * @param[out] The accelerometer data; Must not be null.
+ * @return : None
  */
 void MMA8451Q_ReadAcceleration14bitNoFifo(mma8451q_acc_t *const data)
 {
@@ -80,6 +89,9 @@ void MMA8451Q_ReadAcceleration14bitNoFifo(mma8451q_acc_t *const data)
 
 /**
  * @brief Sets the data rate and the active mode
+ * @param: 1) mma8451q_confreg_t *const configuration: Existing Configuration to be set to MMA8451Q
+ * 		   2) datarate: Update Hz for the sensor
+ * 		   3) lownoise: Bool - Set if Low noise mode
  */
 void MMA8451Q_SetDataRate(mma8451q_confreg_t *const configuration, mma8451q_datarate_t datarate, mma8451q_lownoise_t lownoise)
 {
@@ -98,6 +110,7 @@ void MMA8451Q_SetDataRate(mma8451q_confreg_t *const configuration, mma8451q_data
 
 /**
  * @brief Reads the SYSMOD register from the MMA8451Q.
+ *
  * @return Current system mode.
  */
 uint8_t MMA8451Q_SystemMode()
@@ -107,6 +120,7 @@ uint8_t MMA8451Q_SystemMode()
 
 /**
  * @brief Reads the REG_PL_CFG register from the MMA8451Q.
+ *
  * @return Current portrait/landscape mode.
  */
 uint8_t MMA8451Q_LandscapePortraitConfig()
@@ -116,6 +130,7 @@ uint8_t MMA8451Q_LandscapePortraitConfig()
 
 /**
  * @brief Configures the oversampling modes
+ *
  * @param[in] oversampling The oversampling mode
  */
 void MMA8451Q_SetOversampling(mma8451q_confreg_t *const configuration, mma8451q_oversampling_t oversampling)
@@ -135,6 +150,7 @@ void MMA8451Q_SetOversampling(mma8451q_confreg_t *const configuration, mma8451q_
 
 /**
  * @brief Configures the oversampling modes in sleep mode
+ *
  * @param[in] oversampling The oversampling mode
  */
 void MMA8451Q_SetSleepOversampling(mma8451q_confreg_t *const configuration, mma8451q_oversampling_t oversampling)
@@ -153,13 +169,10 @@ void MMA8451Q_SetSleepOversampling(mma8451q_confreg_t *const configuration, mma8
 }
 
 
-
-
-
-
 /**
  * @brief Configures the transient mode
- * @param[in] oversampling The oversampling mode
+ * @param: None
+ * @return : None
  */
 void MMA8451Q_SetTransient()
 {
@@ -178,13 +191,37 @@ void MMA8451Q_SetTransient()
 	// Set the Debounce Counter for 50 ms: Register 0x20
 	I2C_WriteRegister(MMA8451Q_I2CADDR, 0x20, 0x05);
 
-	//
 
 }
 
 
 
+/**
+ * @brief Configures the Motion mode
+ * @param: None
+ * @return: None
+ */
+void MMA8451Q_SetMotion()
+{
+//	I2C_WriteRegister(register uint8_t slaveId, register uint8_t registerAddress, register uint8_t value);
 
+	// Enable X and Y Axes and enable the latch: Register 0x15 Configuration Register
+	I2C_WriteRegister(MMA8451Q_I2CADDR, 0x15, 0xD8);
+
+	// Set the Debounce Counter for 50 ms: Register 0x20
+//	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_FF_MT_THS, 0x30);
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_FF_MT_THS, 0x1E);
+
+	//Set the debounce counter to eliminate false readings for 100 Hz sample rate with a requirement of 100 ms timer.
+	I2C_WriteRegister(MMA8451Q_I2CADDR, 0x18, 0x0A);
+
+	// Enable Motion/Freefall Interrupt Function in the System (CTRL_REG4)
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG4, 0x04);
+
+	// Route the Motion/Freefall Interrupt Function to INT1 hardware pin (CTRL_REG5)
+	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG5, 0x04);
+
+}
 
 
 
@@ -193,6 +230,7 @@ void MMA8451Q_SetTransient()
  * @brief Configures the sensitivity and the high pass filter
  * @param[in] sensitivity The sensitivity
  * @param[in] highpassEnabled Set to 1 to enable the high pass filter or to 0 otherwise (default)
+ * @return : None
  */
 void MMA8451Q_SetSensitivity(mma8451q_confreg_t *const configuration, mma8451q_sensitivity_t sensitivity, mma8451q_hpo_t highpassEnabled)
 {
@@ -211,6 +249,8 @@ void MMA8451Q_SetSensitivity(mma8451q_confreg_t *const configuration, mma8451q_s
  * @brief Enables or disables interrupts
  * @param[in] mode The mode
  * @param[in] polarity The polarity
+ *
+ * @return: None
  */
 void MMA8451Q_SetInterruptMode(mma8451q_confreg_t *const configuration, mma8451q_intmode_t mode, mma8451q_intpol_t polarity)
 {
@@ -233,6 +273,8 @@ void MMA8451Q_SetInterruptMode(mma8451q_confreg_t *const configuration, mma8451q
  * @brief Configures and enables specific interrupts
  * @param[in] irq The interrupt
  * @param[in] pin The pin
+ *
+ * @return: None
  */
 void MMA8451Q_ConfigureInterrupt(mma8451q_confreg_t *const configuration, mma8451q_interrupt_t irq, mma8451q_intpin_t pin)
 {
@@ -264,6 +306,8 @@ void MMA8451Q_ConfigureInterrupt(mma8451q_confreg_t *const configuration, mma845
 
 /**
  * @brief Clears the interrupt configuration
+ * @param: configuration: Current Configuration to Update for the intertial Sensor
+ * @return: None
  */
 void MMA8451Q_ClearInterruptConfiguration(mma8451q_confreg_t *const configuration)
 {
@@ -282,6 +326,8 @@ void MMA8451Q_ClearInterruptConfiguration(mma8451q_confreg_t *const configuratio
 /**
  * @brief Fetches the configuration into a {@see mma8451q_confreg_t} data structure
  * @param[inout] The configuration data data; Must not be null.
+ *
+ * @return : None
  */
 void MMA8451Q_FetchConfiguration(mma8451q_confreg_t *const configuration)
 {
@@ -378,6 +424,8 @@ void MMA8451Q_FetchConfiguration(mma8451q_confreg_t *const configuration)
 /**
  * @brief Stores the configuration from a {@see mma8451q_confreg_t} data structure
  * @param[in] The configuration data data; Must not be null.
+ *
+ * @return: None
  */
 void MMA8451Q_StoreConfiguration(const mma8451q_confreg_t *const configuration)
 {
@@ -467,6 +515,13 @@ void MMA8451Q_StoreConfiguration(const mma8451q_confreg_t *const configuration)
 }
 
 
+/**
+ * @brief Convert the acceleration data read to roll and pitch
+ *
+ * @param: 1) configuration: Inertial Sensor Configuration to read from
+ * 		   2) roll: float angle tilt calculated in degrees
+ * 		   3) pitch: float angle tilt calculated in degrees
+ */
 void convert_xyz_to_roll_pitch(mma8451q_acc_t *acc, float *roll, float *pitch) {
 	float ax = acc->xyz[0]/COUNTS_PER_G,
 				ay = acc->xyz[1]/COUNTS_PER_G,
@@ -477,6 +532,11 @@ void convert_xyz_to_roll_pitch(mma8451q_acc_t *acc, float *roll, float *pitch) {
 
 }
 
+/**
+ * @brief Read acceleration data from inerital sensor and updat
+ *
+ * @param: configuration: Inertial Sensor Config storage for acceleration data.
+ */
 void read_full_xyz(mma8451q_acc_t *acc)
 {
 	int i;
@@ -493,8 +553,6 @@ void read_full_xyz(mma8451q_acc_t *acc)
 	// Read last byte ending repeated mode
 	data[i] = i2c_repeated_read(1);
 
-//	i2c_read_bytes(MMA_ADDR , REG_XHI, data, 6);
-
 	for ( i=0; i<3; i++ ) {
 		temp[i] = (int16_t) ((data[2*i]<<8) | data[2*i+1]);
 	}
@@ -506,29 +564,29 @@ void read_full_xyz(mma8451q_acc_t *acc)
 }
 
 
-int init_mma()
-{
-	//set active mode, 14 bit samples and 800 Hz ODR
-	i2c_write_byte(MMA_ADDR, MMA8451Q_REG_CTRL_REG1, 0x01);
-	MMA8451Q_INT_PORT->PCR[MMA8451Q_INT1_PIN] = PORT_PCR_MUX(0x1) | PORT_PCR_IRQC(0xA) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK; /* interrupt on falling edge, pull-up for open drain/active low line */
-//	MMA8451Q_INT_GPIO->PDDR &= ~(GPIO_PDDR_PDD(1 << MMA8451Q_INT1_PIN) | GPIO_PDDR_PDD(1 << MMA8451Q_INT2_PIN));
-	MMA8451Q_INT_GPIO->PDDR &= ~(GPIO_PDDR_PDD(1 << MMA8451Q_INT1_PIN));
-
-
-	//    MMA8451Q_REG_CTRL_REG5
-	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG1, 0x00);
-	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG3, 0x00);             // Push-pull, active low interrupt
-	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG4, 0x01);             // Enable DRDY interrupt
-	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG5, 0x01);             // DRDY interrupt routed to INT1 -
-
-//    MMA8451Q_StoreConfiguration(configuration);
-//    MMA8451Q_EnterActiveMode();
-
-
-
-	//    /* prepare interrupts for pin change / PORTA */
-	NVIC_SetPriority(PORTA_IRQn, 2); // 0, 1, 2, or 3
-	NVIC_ClearPendingIRQ(PORTA_IRQn);
-	NVIC_EnableIRQ(PORTA_IRQn);
-	return 1;
-}
+//int init_mma()
+//{
+//	//set active mode, 14 bit samples and 800 Hz ODR
+//	i2c_write_byte(MMA_ADDR, MMA8451Q_REG_CTRL_REG1, 0x01);
+//	MMA8451Q_INT_PORT->PCR[MMA8451Q_INT1_PIN] = PORT_PCR_MUX(0x1) | PORT_PCR_IRQC(0xA) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK; /* interrupt on falling edge, pull-up for open drain/active low line */
+////	MMA8451Q_INT_GPIO->PDDR &= ~(GPIO_PDDR_PDD(1 << MMA8451Q_INT1_PIN) | GPIO_PDDR_PDD(1 << MMA8451Q_INT2_PIN));
+//	MMA8451Q_INT_GPIO->PDDR &= ~(GPIO_PDDR_PDD(1 << MMA8451Q_INT1_PIN));
+//
+//
+//	//    MMA8451Q_REG_CTRL_REG5
+//	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG1, 0x00);
+//	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG3, 0x00);             // Push-pull, active low interrupt
+//	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG4, 0x01);             // Enable DRDY interrupt
+//	I2C_WriteRegister(MMA8451Q_I2CADDR, MMA8451Q_REG_CTRL_REG5, 0x01);             // DRDY interrupt routed to INT1 -
+//
+////    MMA8451Q_StoreConfiguration(configuration);
+////    MMA8451Q_EnterActiveMode();
+//
+//
+//
+//	//    /* prepare interrupts for pin change / PORTA */
+//	NVIC_SetPriority(PORTA_IRQn, 2); // 0, 1, 2, or 3
+//	NVIC_ClearPendingIRQ(PORTA_IRQn);
+//	NVIC_EnableIRQ(PORTA_IRQn);
+//	return 1;
+//}

@@ -2,7 +2,15 @@
  * i2carbiter.c
  *
  *  Created on: Nov 23, 2020
- *      Author: root
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Instantiation and functionalities for Preparing Ports and i2c to read from sensor
+ *      		The reason for this file is to provide the functionality to update KL25Z Ports to
+ *      		subscribe from appropriate ports, as multiple sensors can be connected to other
+ *      		Ports which can require a different setup
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
  */
 
 #include "MKL25Z4.h"

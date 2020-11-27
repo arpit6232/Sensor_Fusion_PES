@@ -1,14 +1,18 @@
 /*
  * statemachine.c
  *
- *  Created on: Nov 25, 2020
- *      Author: root
+ *  Created on: Nov 23, 2020
+ *      Author: Arpit Savarkar
+ *
+ *      @brief: Header file for  Instantiation and functionalities for Maaging State Machine
+ *
+ *    Sources of Reference :
+ * 		Textbooks : Embedded Systems Fundamentals with Arm Cortex-M based MicroControllers
  */
 
 #include "bme.h"
 #include "assert.h"
 #include "clock.h"
-#include "systick.h"
 #include "systick.h"
 #include "delay.h"
 #include "buffer.h"
@@ -22,18 +26,14 @@
 #include "mma8451q.h"
 #include "statemachine.h"
 
-#ifdef DEBUG
-	#define MSG_DEBUG PRINTF
-#else // non-debug mode - get rid of printing message
-	#define MSG_DEBUG(...)
-#endif
+#include "global_defs.h"
 
 
-/* Structure for Handling */
+/* Structure for State Handling */
 struct mma_state_t{
 	state_t state;
 } mma_t  = {
-	.state       = s_ROUTINE
+	.state = s_ROUTINE
 };
 
 
@@ -57,91 +57,86 @@ volatile uint8_t flag;
 void PORTA_IRQHandler()
 {
 
-//	PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
     register uint32_t isfr_mma = MMA8451Q_INT_PORT->ISFR;
 
 	/* check MMA8451Q */
     register uint32_t fromMMA8451Q 	= (isfr_mma & ((1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN)));
 		if (fromMMA8451Q) {
-//		LED_RedOn();
 		PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
-		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x1E);
+//		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x1E);
+		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x16);
+
 		/* clear interrupts using BME decorated logical OR store */
 		PORTA->ISFR |= (1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN);
-		//		BME_OR_W(&MMA8451Q_INT_PORT->ISFR, (1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN));
-    }
+	}
 		flag =1;
 }
 
 
+/**
+ * @brief State Machine Function,
+ * 				1) Updates the state and events in accordance to the Normal Run Vs Jerk Detection
+ * 				2) Initializes the State with the Stop State
+ * 				3) Updates Operation based on interrupt handled in PORTA_Irq
+ * 				4) Brighness increases with increase in Angle
+ * 				5) LED flash in case of Jolt or Jerk. ​
+ *
+ * ​ @param​ ​ none
+​ *
+​ * ​ ​@return​ ​ none
+ */
 void state_machine(void) {
 
-	float roll = 0.0,  pitch = 0.0;
-	int PWM_Green=0, PWM_Blue = 0;
-	int OldRange = 180, NewRange = 48000;
+	// Instantiate States
 	state_t new_state = mma_t.state;
+
+	// Instantiate Acceleration Object
 	mma8451q_acc_t acc;
+
+	// Sets it to default which is Zero
 	MMA8451Q_InitializeData(&acc);
 	int readMMA;
 	MSG_DEBUG("\n\r Initializing Inertial Sensor State Machine");
 
+
 	while(1) {
 		switch(new_state) {
 		case s_ROUTINE:
+
+			// Begin Standard Routine PWM Based LED functionaing
 			reset_timer();
 			flag = 0;
 			MSG_DEBUG("\n\r Inertial Sensor Acceleration within Bounds");
 
-			while(flag != 1) {
+			while(flag != 1) { // While Jerk is not detected
 				LED_RedOff();
 				readMMA = 1;
 
+				// This functionality is provided so as to replace
+				// This inertial sensor with any other sensor
 				if (readMMA) {
-					read_full_xyz(&acc);
-					convert_xyz_to_roll_pitch(&acc, &roll, &pitch);
-					PWM_Green = (((int)roll * NewRange ) / OldRange );
-					PWM_Blue = (((int)pitch * NewRange ) / OldRange );
-					if(PWM_Blue < 533) {
-						PWM_Blue = PWM_Blue *-1;
-					}
-					if((int) pitch > 80) {
-						GREEN_PWM = 0;
-					}
-					GREEN_PWM = PWM_Green;
-					BLUE_PWM = PWM_Blue;
-
-					PRINTF("\r\n roll: %d, pitch: %d", (int)roll, (int)pitch);
+					Control_RGB_LEDs(&acc);
 				}
 			}
-			if(flag == 1) {
+			if(flag == 1) { // If jerk detected update State
 				new_state = s_ACCEL;
 			}
 			break;
 
-
-		case s_ACCEL:
-
+		case s_ACCEL: // Jerk Detected State
 			reset_timer();
 			MSG_DEBUG("\n\r Accelerated too Fast");
+
+			// Flash LED until timeout when Jerk Detected.
 			while(get_timer() < ACCEL_TIMEOUT) {
-				read_full_xyz(&acc);
-				convert_xyz_to_roll_pitch(&acc, &roll, &pitch);
-				PWM_Green = (((int)roll * NewRange ) / OldRange );
-				PWM_Blue = (((int)pitch * NewRange ) / OldRange );
-				if(PWM_Blue < 533) {
-					PWM_Blue = PWM_Blue *-1;
-				}
-				if((int) pitch > 80) {
-					PWM_Green = 0;
-				}
+				Control_RGB_LEDs(&acc);
+				delay_ms(100);
 				GREEN_PWM = 0;
 				BLUE_PWM = 0;
-				delay_ms(200);
-				GREEN_PWM = PWM_Green;
-				BLUE_PWM = PWM_Blue;
-				delay_ms(200);
+				delay_ms(100);
 			}
 			flag = 0;
+			// Update State
 			new_state = s_ROUTINE;
 		}
 	}

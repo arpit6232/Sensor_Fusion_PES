@@ -12,7 +12,8 @@ source/systick.o source/systick.d: ../source/systick.c \
  /home/arpit/studies/pes/Final_Project/CMSIS/MKL25Z4.h \
  /home/arpit/studies/pes/Final_Project/CMSIS/MKL25Z4_features.h \
  /home/arpit/studies/pes/Final_Project/drivers/fsl_clock.h \
- /home/arpit/studies/pes/Final_Project/drivers/fsl_common.h
+ /home/arpit/studies/pes/Final_Project/drivers/fsl_common.h \
+ ../source/global_defs.h
 
 /home/arpit/studies/pes/Final_Project/CMSIS/MKL25Z4.h:
 
@@ -43,3 +44,5 @@ source/systick.o source/systick.d: ../source/systick.c \
 /home/arpit/studies/pes/Final_Project/drivers/fsl_clock.h:
 
 /home/arpit/studies/pes/Final_Project/drivers/fsl_common.h:
+
+../source/global_defs.h:
