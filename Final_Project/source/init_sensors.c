@@ -32,7 +32,6 @@ static union {
 
 void InitMMA8451Q()
 {
-#if ENABLE_MMA8451Q
 	mma8451q_confreg_t *configuration = &config_buffer.mma8451q_configuration;
 
 	// Turn Off LED which can be due to noise
@@ -133,7 +132,7 @@ void InitMMA8451Q()
 
     // Debug Messages
     MSG_DEBUG("MMA8451Q: configuration done.\r\n");
-#endif
+
     Led_Down();
 }
 

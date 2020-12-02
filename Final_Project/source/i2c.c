@@ -68,6 +68,7 @@ void I2C_Init()
 
 	// Select high drive mode
 	I2C0->C2 |= (I2C_C2_HDRS_MASK);
+
 }
 
 

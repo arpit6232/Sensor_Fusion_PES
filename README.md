@@ -2,7 +2,7 @@
 
 ## Project Goal and Repository Comments
 
-- Objective: To tie into the MMA8451Q accelerometer over I2C. Change the LED colors in response to the device orientation, and also use the LED (blinking pattern) to show sudden acceleration.
+- Objective: To tie into the MMA8451Q accelerometer over I2C. Change the LED colors (PWM) in response to the device orientation, and also use the LED (blinking pattern) to show sudden acceleration.
 
 - _Contains_
 Code for Final Project for Principals of Embedded Systems Software, ECEN-5813, Fall 2020

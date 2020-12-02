@@ -29,7 +29,7 @@ typedef enum {
 } state_t;
 
 /* Timeout Period for flashing in case of jerk detection */
-#define ACCEL_TIMEOUT 10000
+#define ACCEL_TIMEOUT 5000
 
 /**
  * @brief State Machine Function,

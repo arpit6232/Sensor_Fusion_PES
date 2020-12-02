@@ -65,6 +65,9 @@ void PORTA_IRQHandler()
 		PORTA->PCR[14] |= PORT_PCR_ISF_MASK;
 //		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x1E);
 		uint8_t Int_SourceTrans = I2C_ReadRegister(MMA8451Q_I2CADDR, 0x16);
+		if(Int_SourceTrans) {
+			Int_SourceTrans = 0;
+		}
 
 		/* clear interrupts using BME decorated logical OR store */
 		PORTA->ISFR |= (1 << MMA8451Q_INT1_PIN) | (1 << MMA8451Q_INT2_PIN);

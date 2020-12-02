@@ -42,6 +42,8 @@ void LED_Init() {
 		RED_PWM = 0;
 		GREEN_PWM = 0;
 		BLUE_PWM = 0;
+
+		MSG_DEBUG("\n\r Clock Gating and Initialization of LED Complete ");
 }
 
 void LED_Red()
@@ -145,7 +147,7 @@ void Control_RGB_LEDs(mma8451q_acc_t *acc) {
 	GREEN_PWM = PWM_Green;
 	BLUE_PWM = PWM_Blue;
 
-	// Debug Prints of Roll and Pitch
-	MSG_DEBUG("\r\n roll: %d, pitch: %d", (int)roll, (int)pitch);
+//	// Debug Prints of Roll and Pitch
+//	MSG_DEBUG("\r\n roll: %d, pitch: %d", (int)roll, (int)pitch);
 }
 

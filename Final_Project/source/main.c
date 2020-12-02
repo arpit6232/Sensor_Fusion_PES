@@ -65,6 +65,7 @@
 #include "init_sensors.h"
 #include "mma8451q.h"
 #include "statemachine.h"
+#include "global_defs.h"
 
 
 #define I2CARBITER_COUNT 	(1)					/*< Number of I2C devices we're talking to */
@@ -87,6 +88,8 @@ void InitI2CArbiter()
     */
     I2CArbiter_PrepareEntry(&i2carbiter_entries[0], MMA8451Q_I2CADDR, 24, 5, 25, 5);
     I2CArbiter_Configure(i2carbiter_entries, I2CARBITER_COUNT);
+
+    MSG_DEBUG("\n\r MMA8451Q Configured to talk to I2C0 ");
 }
 
 /*
